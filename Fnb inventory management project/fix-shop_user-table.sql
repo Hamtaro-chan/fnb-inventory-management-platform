@@ -1,0 +1,1 @@
+ALTER TABLE shop_user ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
