@@ -1,30 +1,26 @@
-CREATE OR REPLACE FUNCTION record_waste(shopID BIGINT, batchID BIGINT, reason VARCHAR)
-RETURNS VARCHAR
+CREATE OR REPLACE FUNCTION process_daily_expiry(shopID BIGINT)
+RETURNS TABLE (
+    result_message VARCHAR
+)
 LANGUAGE plpgsql
 AS $$
 DECLARE
-	qty_to_waste NUMERIC;
-	itemID BIGINT;
+	_batch RECORD;
+	_count INTEGER := 0;
 BEGIN 
-	SELECT quantity_remaining, item_id
-	INTO qty_to_waste, itemID
-	FROM shop_inventory
-	WHERE batch_id = batchID;
+	FOR _batch IN
+		SELECT shop_inventory.batch_id
+		FROM shop_inventory
+		JOIN shop_item_info ON shop_inventory.item_id = shop_item_info.item_id
+		WHERE shop_inventory.expiry_date < NOW()
+			AND shop_inventory.quantity_remaining > 0
+			AND shop_item_info.shop_id = shopID
+		LOOP
+			PERFORM record_waste(shopID, _batch.batch_id, 'Auto-Expired');
+			_count := _count + 1;
+		END LOOP;
 
-	IF qty_to_waste IS NULL THEN
-		RAISE EXCEPTION 'Batch ID % not found.', batchID;
-	END IF;
-	IF qty_to_waste = 0 THEN 
-		RETURN 'Batch is already empty. No waste recorded.';
-	END IF;
-
-	INSERT INTO waste_log(shop_id, batch_id, quantity_wasted, reason, log_date)
-	VALUES (shopID, batchID, qty_to_waste, reason, NOW());
-
-	UPDATE shop_inventory 
-    SET quantity_remaining = 0 
-    WHERE batch_id = batchID;
-
-	RETURN 'Success: Wasted ' || qty_to_waste || ' units.';
+		RETURN QUERY SELECT ('Processed ' || _count || ' expired batches.')::VARCHAR;
+	--This check end-of-day expired items
 END;
-$$
+$$;
