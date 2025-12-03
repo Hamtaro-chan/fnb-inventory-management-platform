@@ -1,0 +1,1 @@
+SELECT create_purchase_order(5, 1, 2000.00);

@@ -1,0 +1,1 @@
+DELETE FROM purchase_orders WHERE po_id = 1;
