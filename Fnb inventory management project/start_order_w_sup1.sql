@@ -1,0 +1,1 @@
+SELECT start_purchase_order(5, 1);
