@@ -1,0 +1,1 @@
+SELECT * FROM check_restock_level(5);
