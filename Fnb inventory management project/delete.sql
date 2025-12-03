@@ -1,0 +1,1 @@
+DELETE FROM shop_item_info WHERE item_id = 8;
