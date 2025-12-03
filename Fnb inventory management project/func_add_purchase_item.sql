@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION add_purchase_order(poID BIGINT, goodID BIGINT, qty INTEGER, unit_cost NUMERIC)
+CREATE OR REPLACE FUNCTION add_purchase_item(poID BIGINT, goodID BIGINT, qty INTEGER, unit_cost NUMERIC)
 RETURNS VOID
 LANGUAGE plpgsql
 AS $$
