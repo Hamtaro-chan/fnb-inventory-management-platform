@@ -1,0 +1,1 @@
+SELECT item_id, item_name FROM shop_item_info WHERE shop_id = 5;
