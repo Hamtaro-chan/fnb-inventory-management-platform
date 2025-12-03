@@ -1,1 +1,1 @@
-SELECT * FROM shop_user
+SELECT * FROM shop_item_info
