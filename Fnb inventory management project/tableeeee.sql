@@ -1,1 +1,1 @@
-SELECT * waste_log;
+SELECT * FROM waste_log;
